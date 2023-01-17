@@ -10,44 +10,6 @@ import UserForm from '../userform'
 import { useSelector, useDispatch } from 'react-redux'
 import { setModalVisible, setUpdate } from '../../store/tableSlice'
 
-const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'username',
-  },
-  {
-    title: 'Email',
-    dataIndex: 'email',
-  },
-  {
-    title: 'Password',
-    dataIndex: 'password',
-  },
-  {
-    title: 'Action',
-    dataIndex: 'isDeletable',
-    render: (text, record) => (
-      <Space size={'large'}>
-        <EditOutlined
-          style={{
-            color: '#4096ff',
-            cursor: 'pointer',
-            fontSize: '16px',
-          }}
-        />
-        <DeleteOutlined
-          style={{
-            color: '#ff4d4f',
-            cursor: record.isDeletable ? 'pointer' : 'not-allowed',
-            fontSize: '16px',
-            opacity: record.isDeletable ? 1 : 0.5,
-          }}
-        />
-      </Space>
-    ),
-  },
-]
-
 export default function DataTable() {
   const dispatch = useDispatch()
   const [buttonVisible, setButtonVisible] = useState(false)
@@ -71,6 +33,57 @@ export default function DataTable() {
     }
     dispatch(setUpdate(Date.now()))
   }
+  const handleDelete = async (id) => {
+    const rawResponse = await fetch(`/api/users/${id}`, {
+      method: 'DELETE',
+    })
+    const content = await rawResponse.json()
+    if (content.error) {
+      console.log('Something went wrong!')
+      return
+    }
+    dispatch(setUpdate(Date.now()))
+  }
+  const columns = [
+    {
+      title: 'Name',
+      dataIndex: 'username',
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+    },
+    {
+      title: 'Password',
+      dataIndex: 'password',
+    },
+    {
+      title: 'Action',
+      dataIndex: 'isDeletable',
+      render: (text, record) => (
+        <Space size={'large'}>
+          <EditOutlined
+            style={{
+              color: '#4096ff',
+              cursor: 'pointer',
+              fontSize: '16px',
+            }}
+          />
+          <DeleteOutlined
+            onClick={() =>
+              record.userName !== 'admin' && handleDelete(record._id)
+            }
+            style={{
+              color: '#ff4d4f',
+              cursor: record.isDeletable ? 'pointer' : 'not-allowed',
+              fontSize: '16px',
+              opacity: record.isDeletable ? 1 : 0.5,
+            }}
+          />
+        </Space>
+      ),
+    },
+  ]
   // rowSelection object indicates the need for row selection
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
