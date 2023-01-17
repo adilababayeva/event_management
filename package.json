@@ -28,6 +28,7 @@
     "react-redux": "^8.0.5"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "^4.30.0",
     "eslint": "8.32.0",
     "eslint-config-next": "13.1.2"
   }
