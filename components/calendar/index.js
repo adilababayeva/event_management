@@ -15,6 +15,7 @@ function Calendar() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isModalOpen2, setIsModalOpen2] = useState(false)
   const [selectedDate, setSelectedDate] = useState('')
+  const [new_event, setNewEvent] = useState('')
   const showModal = () => {
     setIsModalOpen(true)
   }
@@ -28,19 +29,18 @@ function Calendar() {
   }, [update])
 
   const handleOk = async () => {
-    let value = ref.current.input.value
     const response = await fetch('/api/events', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        title: value,
+        title: new_event,
         date: selectedDate,
       }),
     })
     const data = await response.json()
-    ref.current.input.value = ''
+    setNewEvent('')
     await setUpdate(Date.now())
     await setIsModalOpen(false)
   }
@@ -53,7 +53,6 @@ function Calendar() {
       method: 'DELETE',
     })
     const content = await rawResponse.json()
-    ref.current.input.value = ''
     await setUpdate(Date.now())
     await setIsModalOpen2(false)
   }
@@ -111,7 +110,11 @@ function Calendar() {
           DATE : <time>{selectedDate}</time>
         </p>
 
-        <Input ref={ref} placeholder="Event ..." />
+        <Input
+          value={new_event}
+          onChange={(e) => setNewEvent(e.target.value)}
+          placeholder="Event ..."
+        />
       </Modal>
       <Modal
         title="Event"
