@@ -3,10 +3,73 @@ import Fullcalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
+import { Button, Modal } from 'antd'
+import { useState, useRef, useEffect } from 'react'
+import { Input } from 'antd'
+import { setModalVisible } from '../../store/tableSlice'
 
 function Calendar() {
-  const handleDateClick = (arg) => {
-    alert(arg.dateStr)
+  const ref = useRef(null)
+  const [events, setEvents] = useState([])
+  const [event, setEvent] = useState({})
+  const [update, setUpdate] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOpen2, setIsModalOpen2] = useState(false)
+  const [selectedDate, setSelectedDate] = useState('')
+  const showModal = () => {
+    setIsModalOpen(true)
+  }
+  useEffect(() => {
+    const fetchEvents = async () => {
+      const response = await fetch('/api/events')
+      const data = await response.json()
+      setEvents(data)
+    }
+    fetchEvents()
+  }, [update])
+
+  const handleOk = async () => {
+    let value = ref.current.input.value
+    const response = await fetch('/api/events', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: value,
+        date: selectedDate,
+      }),
+    })
+    const data = await response.json()
+    ref.current.input.value = ''
+    await setUpdate(Date.now())
+    await setIsModalOpen(false)
+  }
+  const handleCancel = () => {
+    setIsModalOpen(false)
+    setIsModalOpen2(false)
+  }
+  const handleDelete = async () => {
+    const rawResponse = await fetch(`/api/events/${event._id}`, {
+      method: 'DELETE',
+    })
+    const content = await rawResponse.json()
+    ref.current.input.value = ''
+    await setUpdate(Date.now())
+    await setIsModalOpen2(false)
+  }
+  const handleDateClick = async (arg) => {
+    await setSelectedDate(arg.dateStr)
+    showModal()
+  }
+  const handleEventClick = async (e) => {
+    const datum = {
+      title: e.title,
+      date: e.startStr,
+      _id: e.extendedProps._id,
+    }
+    await setEvent(datum)
+    await setIsModalOpen2(true)
   }
   return (
     <div>
@@ -19,11 +82,38 @@ function Calendar() {
           end: 'dayGridMonth',
         }}
         dateClick={(e) => handleDateClick(e)}
-        events={[
-          { title: 'event 13', date: '2023-01-18' },
-          { title: 'event 2', date: '2023-01-02' },
-        ]}
+        events={events}
+        eventClick={(e) => handleEventClick(e.event)}
       />
+      <Modal
+        title="Add Event"
+        open={isModalOpen}
+        onOk={handleOk}
+        centered={true}
+        onCancel={handleCancel}
+        okText="Add"
+      >
+        <p>
+          DATE : <time>{selectedDate}</time>
+        </p>
+
+        <Input ref={ref} placeholder="Event ..." />
+      </Modal>
+      <Modal
+        title="Event"
+        open={isModalOpen2}
+        onOk={handleDelete}
+        centered={true}
+        onCancel={handleCancel}
+        okText="Delete"
+        okType="danger"
+      >
+        <p>
+          DATE : <time>{event?.date}</time>
+        </p>
+
+        <Input ref={ref} placeholder="Event ..." />
+      </Modal>
     </div>
   )
 }

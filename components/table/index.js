@@ -42,7 +42,6 @@ export default function DataTable() {
     dispatch(setUpdate(Date.now()))
   }
   const handleDelete = async (record) => {
-    // if (record.username === 'Admin') return
     const rawResponse = await fetch(`/api/users/${record._id}`, {
       method: 'DELETE',
     })

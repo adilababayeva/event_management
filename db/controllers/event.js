@@ -43,7 +43,7 @@ export async function putUser(req, res) {
 }
 
 // delete : /api/events/1
-export async function deleteUser(req, res) {
+export async function deleteEvent(req, res) {
   try {
     const { eventId } = req.query
 
