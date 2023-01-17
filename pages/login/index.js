@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux'
 import { setToken } from '../../store/authSlice'
 import { setCookie } from 'cookies-next'
 import { useSelector } from 'react-redux'
+import axios from 'axios'
 
 export default function Login() {
   const { token } = useSelector((state) => state.auth)
