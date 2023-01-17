@@ -8,7 +8,8 @@ import {
   CalendarOutlined,
 } from '@ant-design/icons'
 import { Layout, Menu, theme } from 'antd'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 const { Header, Sider, Content } = Layout
 
 export default function Home() {
@@ -17,6 +18,12 @@ export default function Home() {
   const {
     token: { colorBgContainer },
   } = theme.useToken()
+  const { token } = useSelector((state) => state.auth)
+  useEffect(() => {
+    if (token) {
+      router.push('/')
+    }
+  }, [])
   return (
     <>
       <Head>

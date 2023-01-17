@@ -1,12 +1,23 @@
 import { Button, Form, Input } from 'antd'
 import { UserOutlined } from '@ant-design/icons'
 import { Alert } from 'antd'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import { useDispatch } from 'react-redux'
+import { setToken } from '../../store/authSlice'
+import { setCookie } from 'cookies-next'
+import { useSelector } from 'react-redux'
 
 export default function Login() {
+  const { token } = useSelector((state) => state.auth)
   const router = useRouter()
+  useEffect(() => {
+    if (token) {
+      router.push('/')
+    }
+  }, [])
   const [err, setErr] = useState(false)
+  const dispatch = useDispatch()
   const onFinish = async (values) => {
     const rawResponse = await fetch('/api/login', {
       method: 'POST',
@@ -17,11 +28,18 @@ export default function Login() {
       body: JSON.stringify(values),
     })
     const content = await rawResponse.json()
-    content.error ? setErr(true) : router.push('/')
+    if (content.error) {
+      await setErr(true)
+      return
+    }
+    await setCookie('token', values)
+    await dispatch(setToken(values))
+    router.push('/')
   }
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo)
   }
+
   return (
     <section className="container">
       <Form
@@ -33,7 +51,7 @@ export default function Login() {
         onFinishFailed={onFinishFailed}
         autoComplete="off"
       >
-        {err && <Alert message="User not found" type="error" />}
+        {err && <Alert closable={true} message="User not found" type="error" />}
         <Form.Item
           name="email"
           rules={[
