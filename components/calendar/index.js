@@ -3,10 +3,9 @@ import Fullcalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import { Button, Modal } from 'antd'
+import { Button, Modal, Space } from 'antd'
 import { useState, useRef, useEffect } from 'react'
 import { Input } from 'antd'
-import { setModalVisible } from '../../store/tableSlice'
 
 function Calendar() {
   const ref = useRef(null)
@@ -55,6 +54,21 @@ function Calendar() {
     })
     const content = await rawResponse.json()
     ref.current.input.value = ''
+    await setUpdate(Date.now())
+    await setIsModalOpen2(false)
+  }
+  const handleUpdate = async () => {
+    const rawResponse = await fetch(`/api/events/${event._id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: event?.title,
+        date: event.date,
+      }),
+    })
+    const content = await rawResponse.json()
     await setUpdate(Date.now())
     await setIsModalOpen2(false)
   }
@@ -111,8 +125,18 @@ function Calendar() {
         <p>
           DATE : <time>{event?.date}</time>
         </p>
-
-        <Input ref={ref} placeholder="Event ..." />
+        <Input
+          value={event?.title}
+          onChange={(e) => setEvent({ ...event, title: e.target.value })}
+          placeholder="Event ..."
+        />
+        <Button
+          style={{ marginTop: 12 }}
+          color="primary"
+          onClick={handleUpdate}
+        >
+          Edit
+        </Button>
       </Modal>
     </div>
   )

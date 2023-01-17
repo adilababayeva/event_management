@@ -27,7 +27,7 @@ export async function postEvent(req, res) {
 }
 
 // put : /api/events/1
-export async function putUser(req, res) {
+export async function putEvent(req, res) {
   try {
     const { eventId } = req.query
     const formData = req.body
