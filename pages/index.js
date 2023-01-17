@@ -13,6 +13,7 @@ import { Button } from 'antd'
 import { useSelector, useDispatch } from 'react-redux'
 import { setToken } from '../store/authSlice'
 import { deleteCookie } from 'cookies-next'
+import DataTable from '../components/Table'
 const { Header, Sider, Content } = Layout
 
 export default function Home() {
@@ -91,7 +92,7 @@ export default function Home() {
               background: colorBgContainer,
             }}
           >
-            Content
+            <DataTable />
           </Content>
         </Layout>
       </Layout>

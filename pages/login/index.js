@@ -1,5 +1,5 @@
 import { Button, Form, Input } from 'antd'
-import { UserOutlined } from '@ant-design/icons'
+import { MailOutlined } from '@ant-design/icons'
 import { Alert } from 'antd'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
@@ -63,7 +63,7 @@ export default function Login() {
         >
           <Input
             placeholder="Enter your email"
-            prefix={<UserOutlined className="site-form-item-icon" />}
+            prefix={<MailOutlined className="site-form-item-icon" />}
           />
         </Form.Item>
         <Form.Item
