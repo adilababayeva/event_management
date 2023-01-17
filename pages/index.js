@@ -9,11 +9,15 @@ import {
 } from '@ant-design/icons'
 import { Layout, Menu, theme } from 'antd'
 import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { Button } from 'antd'
+import { useSelector, useDispatch } from 'react-redux'
+import { setToken } from '../store/authSlice'
+import { deleteCookie } from 'cookies-next'
 const { Header, Sider, Content } = Layout
 
 export default function Home() {
   const router = useRouter()
+  const dispatch = useDispatch()
   const [collapsed, setCollapsed] = useState(false)
   const {
     token: { colorBgContainer },
@@ -24,6 +28,11 @@ export default function Home() {
       router.push('/')
     }
   }, [])
+  const HandleLogout = async () => {
+    await deleteCookie('token')
+    await dispatch(setToken(null))
+    router.push('/login')
+  }
   return (
     <>
       <Head>
@@ -58,6 +67,9 @@ export default function Home() {
           <Header
             style={{
               background: colorBgContainer,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
             }}
           >
             {React.createElement(
@@ -67,6 +79,9 @@ export default function Home() {
                 onClick: () => setCollapsed(!collapsed),
               },
             )}
+            <Button onClick={() => HandleLogout()} type="primary">
+              Logout
+            </Button>
           </Header>
           <Content
             style={{
