@@ -13,7 +13,7 @@ import { Button } from 'antd'
 import { useSelector, useDispatch } from 'react-redux'
 import { setToken } from '../store/authSlice'
 import { deleteCookie } from 'cookies-next'
-import DataTable from '../components/Table'
+import DataTable from '../components/table'
 import Calendar from '../components/calendar'
 const { Header, Sider, Content } = Layout
 
