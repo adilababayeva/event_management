@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import UserForm from '../userform'
 import { useSelector, useDispatch } from 'react-redux'
-import { setModalVisible } from '../../store/tableSlice'
+import { setModalVisible, setUpdate } from '../../store/tableSlice'
 
 const columns = [
   {
@@ -50,6 +50,7 @@ const columns = [
 
 export default function DataTable() {
   const dispatch = useDispatch()
+  const [buttonVisible, setButtonVisible] = useState(false)
   const [data, setData] = useState([])
   const { update_id, isModalVisible } = useSelector((state) => state.table)
   useEffect(() => {
@@ -59,24 +60,45 @@ export default function DataTable() {
     }
     fetchData()
   }, [update_id])
+  const handleDeleteAll = async () => {
+    const rawResponse = await fetch(`/api/users`, {
+      method: 'DELETE',
+    })
+    const content = await rawResponse.json()
+    if (content.error) {
+      console.log('Something went wrong!')
+      return
+    }
+    dispatch(setUpdate(Date.now()))
+  }
   // rowSelection object indicates the need for row selection
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log('selectedRows: ', selectedRows)
+      if (selectedRows.length > 0) {
+        setButtonVisible(true)
+        return
+      }
+      setButtonVisible(false)
     },
     getCheckboxProps: (record) => ({
       disabled: record.isDeletable === false,
-      email: record.email,
     }),
   }
   return (
     <div>
-      <Button
-        onClick={() => dispatch(setModalVisible(!isModalVisible))}
-        type="primary"
-      >
-        Add <ArrowRightOutlined />
-      </Button>
+      <Space size={'large'}>
+        <Button
+          onClick={() => dispatch(setModalVisible(!isModalVisible))}
+          type="primary"
+        >
+          Add <ArrowRightOutlined />
+        </Button>
+        {buttonVisible && (
+          <Button onClick={() => handleDeleteAll()} type="primary" danger>
+            Delete All
+          </Button>
+        )}
+      </Space>
       <Divider />
       {isModalVisible && (
         <>
