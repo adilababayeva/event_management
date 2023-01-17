@@ -27,8 +27,8 @@ export default function Home() {
   const { token } = useSelector((state) => state.auth)
   const [tab, setTab] = useState('user')
   useEffect(() => {
-    if (token) {
-      router.push('/')
+    if (!token) {
+      router.push('/login')
     }
   }, [])
   const HandleLogout = async () => {
