@@ -5,4 +5,4 @@
 
 [build.environment]
   NETLIFY_NEXT_PLUGIN_SKIP = "true"
-
+  DB_URL="mongodb+srv://weather-app:weather-app-13@cluster0.08ncqls.mongodb.net/?retryWrites=true&w=majority"
