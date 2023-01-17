@@ -7,14 +7,22 @@ import {
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import UserForm from '../userform'
+import EditForm from '../editForm'
 import { useSelector, useDispatch } from 'react-redux'
-import { setModalVisible, setUpdate } from '../../store/tableSlice'
+import {
+  setModalVisible,
+  setUpdate,
+  setEditVisible,
+  setUser,
+} from '../../store/tableSlice'
 
 export default function DataTable() {
   const dispatch = useDispatch()
   const [buttonVisible, setButtonVisible] = useState(false)
   const [data, setData] = useState([])
-  const { update_id, isModalVisible } = useSelector((state) => state.table)
+  const { update_id, isModalVisible, isEditVisible } = useSelector(
+    (state) => state.table,
+  )
   useEffect(() => {
     const fetchData = async () => {
       const result = await axios.get('/api/users')
@@ -33,8 +41,9 @@ export default function DataTable() {
     }
     dispatch(setUpdate(Date.now()))
   }
-  const handleDelete = async (id) => {
-    const rawResponse = await fetch(`/api/users/${id}`, {
+  const handleDelete = async (record) => {
+    // if (record.username === 'Admin') return
+    const rawResponse = await fetch(`/api/users/${record._id}`, {
       method: 'DELETE',
     })
     const content = await rawResponse.json()
@@ -63,6 +72,10 @@ export default function DataTable() {
       render: (text, record) => (
         <Space size={'large'}>
           <EditOutlined
+            onClick={() => {
+              dispatch(setEditVisible(!isEditVisible))
+              dispatch(setUser(record))
+            }}
             style={{
               color: '#4096ff',
               cursor: 'pointer',
@@ -70,9 +83,7 @@ export default function DataTable() {
             }}
           />
           <DeleteOutlined
-            onClick={() =>
-              record.userName !== 'admin' && handleDelete(record._id)
-            }
+            onClick={() => record.username !== 'Admin' && handleDelete(record)}
             style={{
               color: '#ff4d4f',
               cursor: record.isDeletable ? 'pointer' : 'not-allowed',
@@ -116,6 +127,11 @@ export default function DataTable() {
       {isModalVisible && (
         <>
           <UserForm /> <Divider />
+        </>
+      )}
+      {isEditVisible && (
+        <>
+          <EditForm /> <Divider />
         </>
       )}
 

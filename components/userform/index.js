@@ -31,7 +31,7 @@ export default function UserForm() {
 
   return (
     <Form
-      name="auth"
+      name="addUser"
       initialValues={{
         remember: true,
       }}
