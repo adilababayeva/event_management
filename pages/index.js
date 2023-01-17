@@ -14,6 +14,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setToken } from '../store/authSlice'
 import { deleteCookie } from 'cookies-next'
 import DataTable from '../components/Table'
+import Calendar from '../components/calendar'
 const { Header, Sider, Content } = Layout
 
 export default function Home() {
@@ -24,6 +25,7 @@ export default function Home() {
     token: { colorBgContainer },
   } = theme.useToken()
   const { token } = useSelector((state) => state.auth)
+  const [tab, setTab] = useState('user')
   useEffect(() => {
     if (token) {
       router.push('/')
@@ -53,13 +55,13 @@ export default function Home() {
                 key: '1',
                 icon: <UserOutlined />,
                 label: 'Users',
-                onClick: () => router.push('/'),
+                onClick: () => setTab('user'),
               },
               {
                 key: '2',
                 icon: <CalendarOutlined />,
                 label: 'Events',
-                onClick: () => router.push('/events'),
+                onClick: () => setTab('event'),
               },
             ]}
           />
@@ -92,7 +94,7 @@ export default function Home() {
               background: colorBgContainer,
             }}
           >
-            <DataTable />
+            {tab === 'user' ? <DataTable /> : <Calendar />}
           </Content>
         </Layout>
       </Layout>

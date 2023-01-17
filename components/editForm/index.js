@@ -1,6 +1,5 @@
 import { Button, Form, Input } from 'antd'
 import { UserOutlined, MailOutlined } from '@ant-design/icons'
-import { Alert } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUpdate, setEditVisible } from '../../store/tableSlice'
 import { useState } from 'react'
